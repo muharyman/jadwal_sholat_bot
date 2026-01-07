@@ -16,6 +16,9 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# local wrangler config
+wrangler.toml
+
 # OS
 .DS_Store
 Thumbs.db
