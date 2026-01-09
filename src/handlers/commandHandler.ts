@@ -5,7 +5,7 @@ import type { PrayerTimesService } from "../services/prayerTimes";
 import type { TelegramClient } from "../services/telegram";
 import type { UserRepository } from "../repositories/userRepository";
 import { parseCommand } from "../utils/command";
-import { computeNextDueMinuteUTC } from "../utils/time";
+import { computeNextDueMinuteUTC, localDateParts, addDaysToLocalDate } from "../utils/time";
 
 type Deps = {
   telegram: TelegramClient;
@@ -62,8 +62,20 @@ export class CommandHandler {
       const [city, country] = args.split(",").map(s => s.trim());
 
       const method = 3;
-      const timings = await this.deps.prayerTimes.fetchPrayerTimes(geo.lat, geo.lon, method);
-      const next = computeNextDueMinuteUTC(tz, timings);
+      const today = localDateParts(tz);
+      const timings = await this.deps.prayerTimes.fetchPrayerTimes(geo.lat, geo.lon, method, today);
+      let next = computeNextDueMinuteUTC(tz, timings, today);
+
+      if (!next) {
+        const tomorrow = addDaysToLocalDate(today, 1);
+        const timingsTomorrow = await this.deps.prayerTimes.fetchPrayerTimes(
+          geo.lat,
+          geo.lon,
+          method,
+          tomorrow
+        );
+        next = computeNextDueMinuteUTC(tz, timingsTomorrow, tomorrow);
+      }
 
       await this.deps.users.upsertUser({
         chat_id: chatId,
@@ -103,8 +115,20 @@ export class CommandHandler {
         return;
       }
 
-      const timings = await this.deps.prayerTimes.fetchPrayerTimes(u.lat, u.lon, m);
-      const next = computeNextDueMinuteUTC(u.tz, timings);
+      const today = localDateParts(u.tz);
+      const timings = await this.deps.prayerTimes.fetchPrayerTimes(u.lat, u.lon, m, today);
+      let next = computeNextDueMinuteUTC(u.tz, timings, today);
+
+      if (!next) {
+        const tomorrow = addDaysToLocalDate(today, 1);
+        const timingsTomorrow = await this.deps.prayerTimes.fetchPrayerTimes(
+          u.lat,
+          u.lon,
+          m,
+          tomorrow
+        );
+        next = computeNextDueMinuteUTC(u.tz, timingsTomorrow, tomorrow);
+      }
 
       await this.deps.users.upsertUser({
         chat_id: chatId,
@@ -131,7 +155,8 @@ export class CommandHandler {
       }
 
       const method = u.method ?? 3;
-      const timings = await this.deps.prayerTimes.fetchPrayerTimes(u.lat, u.lon, method);
+      const today = localDateParts(u.tz);
+      const timings = await this.deps.prayerTimes.fetchPrayerTimes(u.lat, u.lon, method, today);
 
       await this.deps.telegram.sendMessage(
         chatId,

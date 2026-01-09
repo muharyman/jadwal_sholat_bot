@@ -7,6 +7,7 @@ export interface UserRepository {
   markSent(chatId: number, dayLocal: string, prayer: string): Promise<void>;
   wasSent(chatId: number, dayLocal: string, prayer: string): Promise<boolean>;
   listDueUsers(minuteUTC: string): Promise<UserRow[]>;
+  listStaleUsers(minuteUTC: string): Promise<UserRow[]>;
   updateNextSchedule(chatId: number, nextPrayer: string | null, dueMinuteUTC: string | null): Promise<void>;
 }
 
@@ -80,6 +81,15 @@ export class D1UserRepository implements UserRepository {
       .bind(minuteUTC)
       .all<UserRow>();
     return due.results ?? [];
+  }
+
+  async listStaleUsers(minuteUTC: string): Promise<UserRow[]> {
+    const stale = await this.env.DB.prepare(
+      "SELECT * FROM users WHERE muted=0 AND (next_due_minute_utc IS NULL OR next_due_minute_utc < ?)"
+    )
+      .bind(minuteUTC)
+      .all<UserRow>();
+    return stale.results ?? [];
   }
 
   async updateNextSchedule(

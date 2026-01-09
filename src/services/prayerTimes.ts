@@ -1,15 +1,25 @@
 import type { PrayerTimings } from "../domain/prayer";
+import type { LocalDateParts } from "../utils/time";
 
 export interface PrayerTimesService {
-  fetchPrayerTimes(lat: number, lon: number, method: number): Promise<PrayerTimings>;
+  fetchPrayerTimes(
+    lat: number,
+    lon: number,
+    method: number,
+    localDate: LocalDateParts
+  ): Promise<PrayerTimings>;
 }
 
 export class AlAdhanPrayerTimesService implements PrayerTimesService {
-  async fetchPrayerTimes(lat: number, lon: number, method: number): Promise<PrayerTimings> {
-    const d = new Date();
-    const dd = String(d.getUTCDate()).padStart(2, "0");
-    const mm = String(d.getUTCMonth() + 1).padStart(2, "0");
-    const yyyy = String(d.getUTCFullYear());
+  async fetchPrayerTimes(
+    lat: number,
+    lon: number,
+    method: number,
+    localDate: LocalDateParts
+  ): Promise<PrayerTimings> {
+    const dd = String(localDate.day).padStart(2, "0");
+    const mm = String(localDate.month).padStart(2, "0");
+    const yyyy = String(localDate.year);
     const dateStr = `${dd}-${mm}-${yyyy}`;
 
     const url = new URL(`https://api.aladhan.com/v1/timings/${dateStr}`);
