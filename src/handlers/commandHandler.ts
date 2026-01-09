@@ -35,10 +35,9 @@ export class CommandHandler {
         chatId,
         "Assalamualaikum! ✨\n" +
           "Selamat datang di Bot Waktu Sholat.\n\n" +
-          "Cara cepat pilih kota:\n" +
-          "  Ketik @bot ini <kota> lalu pilih (inline).\n\n" +
-          "Atau manual:\n" +
-          "  /setcity Berlin, DE\n\n" +
+          "Format set kota:\n" +
+          "  /setcity <kota>, <negara>\n" +
+          "  Contoh: /setcity Berlin, DE\n\n" +
           "Cek jadwal:\n" +
           "  /status\n\n" +
           "Opsional:\n" +
@@ -52,8 +51,7 @@ export class CommandHandler {
       if (!args) {
         await this.deps.telegram.sendMessage(
           chatId,
-          "Format: /setcity <kota, negara>\nContoh: /setcity Berlin, DE\n\n" +
-            "Tips cepat: ketik @bot ini <kota> untuk pilih langsung."
+          "Format: /setcity <kota>, <negara>\nContoh: /setcity Berlin, DE"
         );
         return;
       }
