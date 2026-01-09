@@ -19,6 +19,11 @@ export class CommandHandler {
   constructor(private deps: Deps) {}
 
   async handle(update: TelegramUpdate): Promise<void> {
+    if (update.inline_query?.id) {
+      await this.handleInlineQuery(update.inline_query);
+      return;
+    }
+
     const msg = update.message;
     if (!msg?.chat?.id) return;
 
@@ -28,8 +33,11 @@ export class CommandHandler {
     if (cmd === "/start") {
       await this.deps.telegram.sendMessage(
         chatId,
-        "Assalamualaikum! Bot notifikasi waktu sholat.\n\n" +
-          "Set kota (tanpa GPS):\n" +
+        "Assalamualaikum! ✨\n" +
+          "Selamat datang di Bot Waktu Sholat.\n\n" +
+          "Cara cepat pilih kota:\n" +
+          "  Ketik @bot ini <kota> lalu pilih (inline).\n\n" +
+          "Atau manual:\n" +
           "  /setcity Berlin, DE\n\n" +
           "Cek jadwal:\n" +
           "  /status\n\n" +
@@ -44,7 +52,8 @@ export class CommandHandler {
       if (!args) {
         await this.deps.telegram.sendMessage(
           chatId,
-          "Format: /setcity <kota, negara>\nContoh: /setcity Berlin, DE"
+          "Format: /setcity <kota, negara>\nContoh: /setcity Berlin, DE\n\n" +
+            "Tips cepat: ketik @bot ini <kota> untuk pilih langsung."
         );
         return;
       }
@@ -92,7 +101,11 @@ export class CommandHandler {
 
       await this.deps.telegram.sendMessage(
         chatId,
-        `OK. Tersimpan: ${city || args}, ${country || ""}\nTZ: ${tz}\nMethod: 3 (MWL)\nKetik /status.`
+        `✅ Kota tersimpan!\n` +
+          `• Lokasi: ${city || args}, ${country || ""}\n` +
+          `• TZ: ${tz}\n` +
+          `• Method: 3 (MWL)\n\n` +
+          `Ketik /status untuk lihat jadwal.`
       );
       return;
     }
@@ -111,7 +124,10 @@ export class CommandHandler {
 
       const u = await this.deps.users.getUser(chatId);
       if (!u?.lat || !u.lon || !u.tz) {
-        await this.deps.telegram.sendMessage(chatId, "Set kota dulu: /setcity Berlin, DE");
+        await this.deps.telegram.sendMessage(
+          chatId,
+          "Set kota dulu: /setcity Berlin, DE"
+        );
         return;
       }
 
@@ -143,14 +159,17 @@ export class CommandHandler {
         next_due_minute_utc: next?.dueMinuteUTC ?? null
       });
 
-      await this.deps.telegram.sendMessage(chatId, `OK. Method diubah ke ${m}.`);
+      await this.deps.telegram.sendMessage(chatId, `✅ Method diubah ke ${m}.`);
       return;
     }
 
     if (cmd === "/status") {
       const u = await this.deps.users.getUser(chatId);
       if (!u?.lat || !u.lon || !u.tz) {
-        await this.deps.telegram.sendMessage(chatId, "Set kota dulu: /setcity Berlin, DE");
+        await this.deps.telegram.sendMessage(
+          chatId,
+          "Set kota dulu: /setcity Berlin, DE"
+        );
         return;
       }
 
@@ -160,8 +179,15 @@ export class CommandHandler {
 
       await this.deps.telegram.sendMessage(
         chatId,
-        `Kota: ${u.city ?? "-"}, ${u.country ?? "-"}\nTZ: ${u.tz}\nMethod: ${method}\n\n` +
-          `Fajr: ${timings.Fajr}\nDhuhr: ${timings.Dhuhr}\nAsr: ${timings.Asr}\nMaghrib: ${timings.Maghrib}\nIsha: ${timings.Isha}\n\n` +
+        `🕌 Jadwal Sholat\n` +
+          `Kota: ${u.city ?? "-"}, ${u.country ?? "-"}\n` +
+          `TZ: ${u.tz}\n` +
+          `Method: ${method}\n\n` +
+          `Fajr: ${timings.Fajr}\n` +
+          `Dhuhr: ${timings.Dhuhr}\n` +
+          `Asr: ${timings.Asr}\n` +
+          `Maghrib: ${timings.Maghrib}\n` +
+          `Isha: ${timings.Isha}\n\n` +
           `Notif: ${(u.muted ?? 0) ? "OFF" : "ON"}`
       );
       return;
@@ -171,15 +197,42 @@ export class CommandHandler {
       await this.deps.users.setMuted(chatId, 1);
       await this.deps.telegram.sendMessage(
         chatId,
-        "Notifikasi dimatikan. /unmute untuk aktifkan lagi."
+        "🔕 Notifikasi dimatikan. /unmute untuk aktifkan lagi."
       );
       return;
     }
 
     if (cmd === "/unmute") {
       await this.deps.users.setMuted(chatId, 0);
-      await this.deps.telegram.sendMessage(chatId, "Notifikasi diaktifkan.");
+      await this.deps.telegram.sendMessage(chatId, "🔔 Notifikasi diaktifkan.");
       return;
     }
+  }
+
+  private async handleInlineQuery(inlineQuery: { id: string; query: string }): Promise<void> {
+    const q = inlineQuery.query.trim();
+    if (q.length < 2) {
+      await this.deps.telegram.answerInlineQuery(inlineQuery.id, [], {
+        cacheTime: 1,
+        isPersonal: true
+      });
+      return;
+    }
+
+    const results = await this.deps.geocoder.searchCities(q);
+    const inlineResults = results.map((r, idx) => ({
+      type: "article" as const,
+      id: `${idx}-${r.query}`,
+      title: r.title,
+      description: r.description,
+      input_message_content: {
+        message_text: `/setcity ${r.query}`
+      }
+    }));
+
+    await this.deps.telegram.answerInlineQuery(inlineQuery.id, inlineResults, {
+      cacheTime: 60,
+      isPersonal: true
+    });
   }
 }

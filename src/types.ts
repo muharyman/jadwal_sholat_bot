@@ -13,6 +13,10 @@ export type TelegramUpdate = {
     chat: { id: number };
     text?: string;
   };
+  inline_query?: {
+    id: string;
+    query: string;
+  };
 };
 
 export type UserRow = {

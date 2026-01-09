@@ -32,7 +32,7 @@ export class CronHandler {
       const dayLocal = localDayISO(u.tz);
 
       if (!(await this.deps.users.wasSent(u.chat_id, dayLocal, prayer))) {
-        await this.deps.telegram.sendMessage(u.chat_id, `Waktu sholat ${prayer}`);
+        await this.deps.telegram.sendMessage(u.chat_id, `🕌 Waktunya sholat ${prayer}!`);
         await this.deps.users.markSent(u.chat_id, dayLocal, prayer);
       }
 
