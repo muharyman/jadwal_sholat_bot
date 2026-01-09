@@ -35,12 +35,12 @@ export class CommandHandler {
         chatId,
         "Assalamualaikum! ✨\n" +
           "Selamat datang di Bot Waktu Sholat.\n\n" +
-          "Format set kota:\n" +
+          "Mulai cepat:\n" +
           "  /setcity <kota>, <negara>\n" +
           "  Contoh: /setcity Berlin, DE\n\n" +
           "Cek jadwal:\n" +
           "  /status\n\n" +
-          "Opsional:\n" +
+          "Atur metode & notif:\n" +
           "  /method 3  (MWL)\n" +
           "  /mute /unmute"
       );
@@ -51,7 +51,9 @@ export class CommandHandler {
       if (!args) {
         await this.deps.telegram.sendMessage(
           chatId,
-          "Format: /setcity <kota>, <negara>\nContoh: /setcity Berlin, DE"
+          "Format yang benar:\n" +
+            "  /setcity <kota>, <negara>\n" +
+            "  Contoh: /setcity Berlin, DE"
         );
         return;
       }
@@ -60,7 +62,8 @@ export class CommandHandler {
       if (!geo) {
         await this.deps.telegram.sendMessage(
           chatId,
-          "Kota tidak ditemukan. Coba lebih spesifik, misalnya: Berlin, DE"
+          "❌ Kota tidak ditemukan.\n" +
+            "Coba lebih spesifik, misalnya: Berlin, DE"
         );
         return;
       }
@@ -100,9 +103,9 @@ export class CommandHandler {
       await this.deps.telegram.sendMessage(
         chatId,
         `✅ Kota tersimpan!\n` +
-          `• Lokasi: ${city || args}, ${country || ""}\n` +
-          `• TZ: ${tz}\n` +
-          `• Method: 3 (MWL)\n\n` +
+          `📍 Lokasi: ${city || args}, ${country || ""}\n` +
+          `🕒 TZ: ${tz}\n` +
+          `🧭 Method: 3 (MWL)\n\n` +
           `Ketik /status untuk lihat jadwal.`
       );
       return;
@@ -113,7 +116,9 @@ export class CommandHandler {
       if (!m || Number.isNaN(m)) {
         await this.deps.telegram.sendMessage(
           chatId,
-          "Kirim: /method <angka>\nContoh: /method 3\n\n" +
+          "Format:\n" +
+            "  /method <angka>\n" +
+            "  Contoh: /method 3\n\n" +
             "Contoh method (AlAdhan):\n" +
             "2=ISNA, 3=MWL, 4=UmmAlQura, 5=Egypt"
         );
@@ -124,7 +129,8 @@ export class CommandHandler {
       if (!u?.lat || !u.lon || !u.tz) {
         await this.deps.telegram.sendMessage(
           chatId,
-          "Set kota dulu: /setcity Berlin, DE"
+          "⚠️ Set kota dulu:\n" +
+            "  /setcity Berlin, DE"
         );
         return;
       }
@@ -166,7 +172,8 @@ export class CommandHandler {
       if (!u?.lat || !u.lon || !u.tz) {
         await this.deps.telegram.sendMessage(
           chatId,
-          "Set kota dulu: /setcity Berlin, DE"
+          "⚠️ Set kota dulu:\n" +
+            "  /setcity Berlin, DE"
         );
         return;
       }
@@ -178,9 +185,9 @@ export class CommandHandler {
       await this.deps.telegram.sendMessage(
         chatId,
         `🕌 Jadwal Sholat\n` +
-          `Kota: ${u.city ?? "-"}, ${u.country ?? "-"}\n` +
-          `TZ: ${u.tz}\n` +
-          `Method: ${method}\n\n` +
+          `📍 Kota: ${u.city ?? "-"}, ${u.country ?? "-"}\n` +
+          `🕒 TZ: ${u.tz}\n` +
+          `🧭 Method: ${method}\n\n` +
           `Fajr: ${timings.Fajr}\n` +
           `Dhuhr: ${timings.Dhuhr}\n` +
           `Asr: ${timings.Asr}\n` +
@@ -195,14 +202,15 @@ export class CommandHandler {
       await this.deps.users.setMuted(chatId, 1);
       await this.deps.telegram.sendMessage(
         chatId,
-        "🔕 Notifikasi dimatikan. /unmute untuk aktifkan lagi."
+        "🔕 Notifikasi dimatikan.\n" +
+          "Ketik /unmute untuk aktifkan lagi."
       );
       return;
     }
 
     if (cmd === "/unmute") {
       await this.deps.users.setMuted(chatId, 0);
-      await this.deps.telegram.sendMessage(chatId, "🔔 Notifikasi diaktifkan.");
+      await this.deps.telegram.sendMessage(chatId, "🔔 Notifikasi diaktifkan. Siap mengingatkan! ✨");
       return;
     }
   }
