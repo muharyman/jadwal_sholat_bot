@@ -2,7 +2,7 @@
 
 ## Tujuan
 Bot Telegram untuk notifikasi waktu sholat yang bisa dipakai publik.
-User cukup set lokasi berdasarkan kota: `/setcity Berlin, DE` (tanpa GPS permission).
+User cukup set lokasi berdasarkan kota: `/setcity Berlin, Germany` (tanpa GPS permission).
 
 ## Fitur
 - Set lokasi via nama kota.
@@ -12,7 +12,7 @@ User cukup set lokasi berdasarkan kota: `/setcity Berlin, DE` (tanpa GPS permiss
 
 ## Commands
 - `/start` - bantuan singkat
-- `/setcity <kota, negara>` - set lokasi, contoh `/setcity Berlin, DE`
+- `/setcity <kota, negara>` - set lokasi, contoh `/setcity Berlin, Germany`
 - `/status` - cek jadwal dan status notifikasi
 - `/method <angka>` - ganti metode perhitungan (AlAdhan)
 - `/mute` - matikan notifikasi
@@ -82,7 +82,7 @@ curl "https://api.telegram.org/bot<YOUR_TOKEN>/getWebhookInfo"
 10) Test bot di Telegram:
 ```
 /start
-/setcity Berlin, DE
+/setcity Berlin, Germany
 /status
 ```
 

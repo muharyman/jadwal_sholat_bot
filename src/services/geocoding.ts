@@ -69,17 +69,14 @@ export class NominatimGeocoder implements Geocoder {
         item.name ||
         item.display_name?.split(",")[0]?.trim() ||
         "Unknown";
-      const countryCode = address.country_code?.toUpperCase();
       const country = address.country || "";
-      const title = countryCode ? `${city}, ${countryCode}` : country ? `${city}, ${country}` : city;
+      const title = country ? `${city}, ${country}` : city;
       const description =
         item.display_name ||
         [city, address.state, country].filter(Boolean).join(", ");
-      const queryText = countryCode
-        ? `${city}, ${countryCode}`
-        : country
-          ? `${city}, ${country}`
-          : item.display_name || city;
+      const queryText = country
+        ? `${city}, ${country}`
+        : item.display_name || city;
 
       return { title, description, query: queryText };
     });
