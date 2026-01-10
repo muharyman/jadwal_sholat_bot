@@ -37,7 +37,7 @@ export class CommandHandler {
           "Selamat datang di Bot Waktu Sholat.\n\n" +
           "Mulai cepat:\n" +
           "  /setcity <kota>, <negara>\n" +
-          "  Contoh: /setcity Berlin, Germany\n\n" +
+          "  Contoh: /setcity Berlin, Jerman\n\n" +
           "Cek jadwal:\n" +
           "  /status\n\n" +
           "Atur metode & notif:\n" +
@@ -53,7 +53,7 @@ export class CommandHandler {
           chatId,
           "Format yang benar:\n" +
             "  /setcity <kota>, <negara>\n" +
-            "  Contoh: /setcity Berlin, Germany"
+            "  Contoh: /setcity Berlin, Jerman"
         );
         return;
       }
@@ -63,7 +63,7 @@ export class CommandHandler {
         await this.deps.telegram.sendMessage(
           chatId,
           "❌ Kota tidak ditemukan.\n" +
-            "Coba lebih spesifik, misalnya: Berlin, Germany"
+            "Coba lebih spesifik, misalnya: Berlin, Jerman"
         );
         return;
       }
@@ -130,7 +130,7 @@ export class CommandHandler {
         await this.deps.telegram.sendMessage(
           chatId,
           "⚠️ Set kota dulu:\n" +
-            "  /setcity Berlin, Germany"
+            "  /setcity Berlin, Jerman"
         );
         return;
       }
@@ -173,7 +173,7 @@ export class CommandHandler {
         await this.deps.telegram.sendMessage(
           chatId,
           "⚠️ Set kota dulu:\n" +
-            "  /setcity Berlin, Germany"
+            "  /setcity Berlin, Jerman"
         );
         return;
       }
