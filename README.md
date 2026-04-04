@@ -1,98 +1,110 @@
-# Sholat Telegram Bot - Cloudflare Workers + Cron + D1
+# Sholat Telegram Bot
 
-## Purpose
-A Telegram bot that sends prayer time notifications for public use.
-Users only need to set their location by city: `/setcity Berlin, Germany` (no GPS permission required).
+Bot Telegram berbasis Cloudflare Workers + D1 untuk reminder waktu sholat, plus frontend statis sederhana untuk preview jadwal.
 
 ## Features
-- Set location using a city name.
-- Prayer times from AlAdhan.
-- Automatic notifications via Cron every minute.
-- Mute/unmute notifications.
+- Set lokasi cukup dengan nama kota lewat Telegram.
+- Reminder real-time tetap dikirim tiap waktu sholat.
+- Refresh jadwal harian dipisah dari dispatch notifikasi.
+- Public API read-only untuk frontend preview.
+- Static landing page sederhana di folder `web/`.
 
 ## Commands
-- `/start` - quick help
-- `/setcity <city, country>` - set location, example `/setcity Berlin, Germany`
-- `/status` - view schedule and notification status
-- `/method <number>` - change calculation method (AlAdhan)
-- `/mute` - disable notifications
-- `/unmute` - enable notifications
+- `/start`
+- `/setcity <kota, negara>`
+- `/status`
+- `/method <number>`
+- `/mute`
+- `/unmute`
 
-## Configuration
-In `wrangler.toml`:
-- `TELEGRAM_API_BASE` defaults to `https://api.telegram.org`
-- `NOMINATIM_USER_AGENT` must be set (valid user agent format)
+## Architecture
+- `* * * * *`: dispatch notifikasi Telegram dari schedule yang sudah tersimpan di D1.
+- `0 0 * * *`: refresh cache jadwal harian dari AlAdhan untuk hari lokal aktif + hari berikutnya.
+- Geocoding: Nominatim.
+- Timezone lookup: timeapi.io dengan fallback AlAdhan.
+- Prayer times: AlAdhan.
+
+## Worker Configuration
+Salin `wrangler.toml.example` menjadi `wrangler.toml`, lalu isi nilainya.
+
+Vars:
+- `TELEGRAM_API_BASE`
+- `NOMINATIM_USER_AGENT`
+- `FRONTEND_ORIGIN`
 
 Secrets:
-- `TELEGRAM_BOT_TOKEN` from @BotFather
-- `WEBHOOK_SECRET` random string for the webhook endpoint
+- `TELEGRAM_BOT_TOKEN`
+- `WEBHOOK_SECRET`
 
-Database:
-- D1 binding: `DB`
+Database binding:
+- `DB`
 
-## Deployment (Cloudflare Workers)
-1) Install dependencies:
+## Public API
+- `GET /health`
+- `GET /api/public/search-city?q=jakarta`
+- `GET /api/public/prayer-times?city=Jakarta,%20Indonesia&method=3`
+
+## Backend Deploy
+1. Install dependency:
 ```bash
 npm install
 ```
 
-2) Login to Cloudflare:
+2. Login Cloudflare:
 ```bash
-npx wrangler login
+wrangler login
 ```
 
-3) Create the D1 database:
+3. Buat D1 database:
 ```bash
-npx wrangler d1 create sholat_bot_db
+wrangler d1 create sholat_bot_db
 ```
 
-4) Copy the `database_id` output and paste it into `wrangler.toml`:
-```
-database_id = "..."
-```
+4. Isi `database_id` ke `wrangler.toml`.
 
-5) Run migrations:
+5. Jalankan migrasi:
 ```bash
-npx wrangler d1 migrations apply sholat_bot_db --local
-npx wrangler d1 migrations apply sholat_bot_db
+wrangler d1 migrations apply sholat_bot_db --local
+wrangler d1 migrations apply sholat_bot_db
 ```
 
-6) Set secrets:
+6. Simpan secret:
 ```bash
-npx wrangler secret put TELEGRAM_BOT_TOKEN
-npx wrangler secret put WEBHOOK_SECRET
+wrangler secret put TELEGRAM_BOT_TOKEN
+wrangler secret put WEBHOOK_SECRET
 ```
 
-7) Deploy the Worker:
+7. Deploy Worker:
 ```bash
-npx wrangler deploy
+wrangler deploy
 ```
 
-8) Set Telegram webhook to the Worker:
+8. Set webhook Telegram:
 ```bash
 curl -X POST "https://api.telegram.org/bot<YOUR_TOKEN>/setWebhook" \
   -d "url=https://sholat-bot.<subdomain>.workers.dev/webhook/<WEBHOOK_SECRET>"
 ```
 
-9) Check webhook:
+## Frontend Deploy (Vercel)
+1. Edit `web/config.js`:
+```js
+window.SHOLAT_APP_CONFIG = {
+  API_BASE_URL: "https://your-worker-subdomain.workers.dev",
+  TELEGRAM_BOT_URL: "https://t.me/your_bot_username"
+};
+```
+
+2. Saat membuat project di Vercel, set Root Directory ke `web`.
+
+3. Deploy static site:
 ```bash
-curl "https://api.telegram.org/bot<YOUR_TOKEN>/getWebhookInfo"
+vercel --prod
 ```
 
-10) Test the bot in Telegram:
-```
-/start
-/setcity Berlin, Germany
-/status
-```
-
-## Notes
-- Geocoding uses Nominatim (OpenStreetMap). Please avoid heavy usage.
-- Timezone lookup uses timeapi.io (free). If you want to avoid third-party calls, add a manual `/settz` command.
-- The Cron trigger runs every minute (see `wrangler.toml`).
-
-## Credits
-- Prayer time data is provided by the AlAdhan API.
+## Local Notes
+- `wrangler.toml` di-ignore oleh git. Simpan perubahan lokal di file itu, dan gunakan `wrangler.toml.example` sebagai template repo.
+- Frontend preview memanggil Worker API langsung, jadi `FRONTEND_ORIGIN` di Worker harus sesuai domain Vercel.
+- Dispatch cron per menit tidak lagi fetch AlAdhan.
 
 ## License
-This project is open source and available for use under the MIT License. See `LICENSE` for details.
+MIT. Lihat `LICENSE`.

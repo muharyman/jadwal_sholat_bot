@@ -3,7 +3,7 @@ main = "src/index.ts"
 compatibility_date = "2026-01-07"
 
 [triggers]
-crons = ["* * * * *"]
+crons = ["* * * * *", "0 0 * * *"]
 
 [[d1_databases]]
 binding = "DB"
@@ -13,3 +13,4 @@ database_id = "PASTE_YOUR_DATABASE_ID_HERE"
 [vars]
 TELEGRAM_API_BASE = "https://api.telegram.org"
 NOMINATIM_USER_AGENT = "SholatBot/1.0 (contact: your-email@example.com)"
+FRONTEND_ORIGIN = "https://your-vercel-app.vercel.app"
