@@ -283,16 +283,18 @@ button,
 
 .timings {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
-  gap: 10px;
+  grid-template-columns: 1fr;
+  gap: 8px;
 }
 
 .timing-item {
-  padding: 14px;
-  border-radius: 16px;
-  background:
-    linear-gradient(180deg, rgba(15, 118, 110, 0.12), rgba(255, 255, 255, 0.84));
-  border: 1px solid rgba(15, 118, 110, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(29, 42, 34, 0.08);
+  background: transparent;
 }
 
 .timing-item span {
@@ -300,14 +302,22 @@ button,
 }
 
 .timing-label {
-  margin-bottom: 6px;
+  margin-bottom: 0;
   color: var(--muted);
   font-size: 0.86rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 .timing-value {
   font-size: 1.08rem;
   font-weight: 800;
+  text-align: right;
+}
+
+.timing-item:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
 }
 
 .hidden {
@@ -334,35 +344,35 @@ button,
 
   .shell {
     width: min(100%, calc(100% - 20px));
-    min-height: calc(100svh - 20px);
-    padding: 10px 0;
-    gap: 10px;
+    min-height: calc(100svh - 16px);
+    padding: 8px 0;
+    gap: 8px;
     grid-template-columns: 1fr;
-    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-rows: auto auto;
   }
 
   .hero,
   .card {
-    padding: 16px;
-    border-radius: 24px;
+    padding: 14px;
+    border-radius: 20px;
   }
 
   h1 {
     max-width: 100%;
-    margin-bottom: 8px;
-    font-size: clamp(1.55rem, 6.8vw, 2rem);
-    line-height: 0.98;
+    margin-bottom: 6px;
+    font-size: clamp(1.4rem, 6vw, 1.78rem);
+    line-height: 1;
   }
 
   .lede {
-    margin-bottom: 12px;
-    font-size: 0.92rem;
-    line-height: 1.42;
+    margin-bottom: 10px;
+    font-size: 0.84rem;
+    line-height: 1.34;
   }
 
   .search-panel {
-    padding: 14px;
-    border-radius: 18px;
+    padding: 12px;
+    border-radius: 16px;
   }
 
   .card-head,
@@ -373,7 +383,7 @@ button,
 
   .search-row {
     grid-template-columns: 1fr;
-    gap: 8px;
+    gap: 6px;
   }
 
   .telegram-link,
@@ -384,61 +394,61 @@ button,
   }
 
   .status {
-    min-height: 1.2em;
+    min-height: 1.1em;
+    font-size: 0.8rem;
   }
 
   .results {
-    gap: 8px;
-    margin-top: 10px;
-    overflow: auto;
-    overscroll-behavior: contain;
-    max-height: 24svh;
-    padding-right: 2px;
+    gap: 6px;
+    margin-top: 8px;
   }
 
   .result-item {
-    gap: 10px;
-    padding: 12px 14px;
-    border-radius: 16px;
+    gap: 8px;
+    padding: 10px 12px;
+    border-radius: 14px;
+  }
+
+  .result-item h3 {
+    font-size: 0.9rem;
+  }
+
+  .result-item p {
+    font-size: 0.8rem;
   }
 
   #schedule-title {
-    font-size: clamp(1.2rem, 5vw, 1.5rem);
+    font-size: clamp(1.05rem, 4.4vw, 1.28rem);
   }
 
   .meta {
-    gap: 8px;
-    margin: 10px 0 12px;
-    font-size: 0.82rem;
+    gap: 6px;
+    margin: 8px 0 10px;
+    font-size: 0.76rem;
   }
 
   .meta span {
-    padding: 7px 10px;
+    padding: 6px 8px;
   }
 
   .card {
     min-height: 0;
-    overflow: auto;
-    overscroll-behavior: contain;
   }
 
   .timings {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
+    gap: 6px;
   }
 
   .timing-item {
-    padding: 12px;
-    border-radius: 14px;
+    padding: 9px 0;
   }
 
   .timing-label {
-    margin-bottom: 4px;
-    font-size: 0.8rem;
+    font-size: 0.68rem;
   }
 
   .timing-value {
-    font-size: 1rem;
+    font-size: 0.88rem;
   }
 }
 
@@ -453,16 +463,16 @@ button,
   .hero,
   .card,
   .search-panel {
-    border-radius: 18px;
+    border-radius: 16px;
   }
 
   .hero,
   .card {
-    padding: 14px;
+    padding: 12px;
   }
 
   .search-panel {
-    padding: 12px;
+    padding: 10px;
   }
 
   .meta {
@@ -475,42 +485,38 @@ button,
   }
 
   .timings {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 720px) and (max-height: 820px) {
   .eyebrow {
-    margin-bottom: 6px;
-    font-size: 0.74rem;
+    margin-bottom: 4px;
+    font-size: 0.68rem;
   }
 
   .lede,
   .hint {
-    font-size: 0.84rem;
+    font-size: 0.76rem;
   }
 
   .lede {
-    margin-bottom: 10px;
+    margin-bottom: 8px;
   }
 
   .search-panel {
-    padding: 12px;
+    padding: 10px;
   }
 
   input,
   .search-row button,
   .telegram-link,
   .result-item button {
-    padding: 11px 14px;
-  }
-
-  .results {
-    max-height: 19svh;
+    padding: 10px 12px;
   }
 
   .timing-item {
-    padding: 10px;
+    padding: 8px;
   }
 }
 
@@ -520,10 +526,6 @@ button,
   }
 
   .hint {
-    margin-top: 8px;
-  }
-
-  .results {
-    max-height: 16svh;
+    margin-top: 6px;
   }
 }
