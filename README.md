@@ -104,6 +104,8 @@ vercel --prod
 ## Local Notes
 - `wrangler.toml` di-ignore oleh git. Simpan perubahan lokal di file itu, dan gunakan `wrangler.toml.example` sebagai template repo.
 - Frontend preview memanggil Worker API langsung, jadi `FRONTEND_ORIGIN` di Worker harus sesuai domain Vercel.
+- Frontend menyimpan kota terakhir yang berhasil dipilih di `localStorage`, lalu memuat ulang data terbaru saat halaman dibuka kembali.
+- Tampilan frontend menggunakan copy berbahasa Inggris dan format tanggal panjang seperti `Sunday, 5 April 2026`.
 - Dispatch cron per menit tidak lagi fetch AlAdhan.
 
 ## License
