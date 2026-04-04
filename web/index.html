@@ -1,12 +1,12 @@
 <!doctype html>
-<html lang="id">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Jadwal Sholat Bot Telegram</title>
+    <title>Prayer Times Telegram Bot</title>
     <meta
       name="description"
-      content="Cari jadwal sholat sederhana dan lanjutkan pengingat otomatis lewat bot Telegram."
+      content="Search daily prayer times and continue with automatic reminders in Telegram."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -19,26 +19,26 @@
   <body>
     <main class="shell">
       <section class="hero">
-        <p class="eyebrow">Bot Telegram Sholat</p>
-        <h1>Cek jadwal hari ini, lalu aktifkan pengingat di Telegram.</h1>
+        <p class="eyebrow">Prayer Times Bot</p>
+        <h1>Check today&apos;s prayer times and continue in Telegram.</h1>
         <p class="lede">
-          Halaman ini hanya untuk preview cepat. Pengingat otomatis tetap dikirim lewat bot
-          Telegram.
+          This page is a quick preview. Automatic reminders are still delivered through the
+          Telegram bot.
         </p>
 
         <form id="search-form" class="search-panel">
-          <label class="label" for="city-query">Kota / Negara</label>
+          <label class="label" for="city-query">City / Country</label>
           <div class="search-row">
             <input
               id="city-query"
               name="city"
               type="text"
-              placeholder="Contoh: Jakarta, Indonesia"
+              placeholder="Example: Jakarta, Indonesia"
               autocomplete="off"
             />
-            <button type="submit">Cari</button>
+            <button type="submit">Search</button>
           </div>
-          <p class="hint">Gunakan format kota yang spesifik agar hasilnya lebih akurat.</p>
+          <p class="hint">Use a specific city format to get a more accurate result.</p>
         </form>
 
         <div id="status" class="status" aria-live="polite"></div>
@@ -48,11 +48,11 @@
       <section id="schedule-card" class="card hidden" aria-live="polite">
         <div class="card-head">
           <div>
-            <p class="eyebrow">Preview Hari Ini</p>
+            <p class="eyebrow">Today&apos;s Preview</p>
             <h2 id="schedule-title">-</h2>
           </div>
           <a id="telegram-link" class="telegram-link" href="#" target="_blank" rel="noreferrer">
-            Buka Bot
+            Open Bot
           </a>
         </div>
 

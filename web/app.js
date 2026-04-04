@@ -16,7 +16,7 @@ const LAST_CITY_STORAGE_KEY = "sholat:last-city";
 telegramLink.href = config.TELEGRAM_BOT_URL || "#";
 
 if (!config.API_BASE_URL || !config.TELEGRAM_BOT_URL) {
-  setStatus("Lengkapi dulu `web/config.js` sebelum deploy frontend.", true);
+  setStatus("Complete `web/config.js` before deploying the frontend.", true);
 }
 
 searchForm.addEventListener("submit", async event => {
@@ -24,11 +24,11 @@ searchForm.addEventListener("submit", async event => {
 
   const query = cityInput.value.trim();
   if (!query) {
-    setStatus("Masukkan nama kota terlebih dahulu.", true);
+    setStatus("Enter a city name first.", true);
     return;
   }
 
-  setStatus("Mencari kota...");
+  setStatus("Searching for a city...");
   hideSchedule();
   resultsEl.innerHTML = "";
 
@@ -39,11 +39,11 @@ searchForm.addEventListener("submit", async event => {
     const results = response.results || [];
 
     if (!results.length) {
-      setStatus("Kota tidak ditemukan. Coba masukkan nama yang lebih spesifik.", true);
+      setStatus("City not found. Try a more specific query.", true);
       return;
     }
 
-    setStatus("Pilih salah satu hasil di bawah.");
+    setStatus("Select one of the matching results below.");
     renderResults(results);
   } catch (error) {
     setStatus(readError(error), true);
@@ -62,7 +62,7 @@ function renderResults(results) {
 
     const button = document.createElement("button");
     button.type = "button";
-    button.textContent = "Lihat Jadwal";
+    button.textContent = "View Times";
     button.addEventListener("click", () => loadPrayerTimes(result.query, { persistCity: true }));
 
     item.append(copy, button);
@@ -71,7 +71,7 @@ function renderResults(results) {
 }
 
 async function loadPrayerTimes(city, options = {}) {
-  const { persistCity = false, initialStatus = "Mengambil jadwal sholat..." } = options;
+  const { persistCity = false, initialStatus = "Loading prayer times..." } = options;
 
   setStatus(initialStatus);
   cityInput.value = city;
@@ -87,7 +87,7 @@ async function loadPrayerTimes(city, options = {}) {
     }
 
     scheduleTitle.textContent = response.city;
-    scheduleDate.textContent = `Tanggal lokal: ${response.day_local}`;
+    scheduleDate.textContent = formatLongDate(response.day_local);
     scheduleTimezone.textContent = `Timezone: ${response.tz}`;
     timingsEl.innerHTML = "";
 
@@ -101,7 +101,7 @@ async function loadPrayerTimes(city, options = {}) {
     }
 
     showSchedule();
-    setStatus(`Jadwal untuk ${response.city} berhasil dimuat.`);
+    setStatus(`Prayer times for ${response.city} loaded successfully.`);
   } catch (error) {
     setStatus(readError(error), true);
   }
@@ -112,7 +112,7 @@ async function fetchJson(url) {
   const payload = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    throw new Error(payload.error || "Permintaan gagal diproses.");
+    throw new Error(payload.error || "The request could not be completed.");
   }
 
   return payload;
@@ -133,7 +133,7 @@ function setStatus(message, isError = false) {
 
 function readError(error) {
   if (error instanceof Error && error.message) return error.message;
-  return "Terjadi kesalahan yang tidak diketahui.";
+  return "An unknown error occurred.";
 }
 
 function escapeHtml(value) {
@@ -145,10 +145,21 @@ function escapeHtml(value) {
     .replaceAll("'", "&#39;");
 }
 
+function formatLongDate(dayLocal) {
+  const safeDate = new Date(`${dayLocal}T12:00:00Z`);
+  return new Intl.DateTimeFormat("en-GB", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC"
+  }).format(safeDate);
+}
+
 const lastCity = localStorage.getItem(LAST_CITY_STORAGE_KEY);
 if (lastCity) {
   cityInput.value = lastCity;
   loadPrayerTimes(lastCity, {
-    initialStatus: "Memuat ulang jadwal kota terakhir..."
+    initialStatus: "Refreshing your saved city..."
   });
 }
