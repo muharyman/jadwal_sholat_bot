@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jadwal Sholat Bot Telegram</title>
+    <meta
+      name="description"
+      content="Cari jadwal sholat sederhana dan lanjutkan pengingat otomatis lewat bot Telegram."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <p class="eyebrow">Bot Telegram Sholat</p>
+        <h1>Cek jadwal hari ini, lalu aktifkan pengingat di Telegram.</h1>
+        <p class="lede">
+          Halaman ini hanya untuk preview cepat. Pengingat otomatis tetap dikirim lewat bot
+          Telegram.
+        </p>
+
+        <form id="search-form" class="search-panel">
+          <label class="label" for="city-query">Kota / Negara</label>
+          <div class="search-row">
+            <input
+              id="city-query"
+              name="city"
+              type="text"
+              placeholder="Contoh: Jakarta, Indonesia"
+              autocomplete="off"
+            />
+            <button type="submit">Cari</button>
+          </div>
+          <p class="hint">Gunakan format kota yang spesifik agar hasilnya lebih akurat.</p>
+        </form>
+
+        <div id="status" class="status" aria-live="polite"></div>
+        <div id="results" class="results"></div>
+      </section>
+
+      <section id="schedule-card" class="card hidden" aria-live="polite">
+        <div class="card-head">
+          <div>
+            <p class="eyebrow">Preview Hari Ini</p>
+            <h2 id="schedule-title">-</h2>
+          </div>
+          <a id="telegram-link" class="telegram-link" href="#" target="_blank" rel="noreferrer">
+            Buka Bot
+          </a>
+        </div>
+
+        <div class="meta">
+          <span id="schedule-date">-</span>
+          <span id="schedule-timezone">-</span>
+        </div>
+
+        <div id="timings" class="timings"></div>
+      </section>
+    </main>
+
+    <script src="./config.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>

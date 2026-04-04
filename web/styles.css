@@ -1,0 +1,265 @@
+:root {
+  --bg: #f6efe3;
+  --panel: rgba(255, 252, 247, 0.88);
+  --text: #1d2a22;
+  --muted: #5b675f;
+  --line: rgba(29, 42, 34, 0.12);
+  --accent: #0f766e;
+  --accent-strong: #115e59;
+  --shadow: 0 24px 60px rgba(34, 51, 43, 0.14);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at top left, rgba(15, 118, 110, 0.14), transparent 28%),
+    radial-gradient(circle at right, rgba(203, 134, 55, 0.14), transparent 24%),
+    linear-gradient(180deg, #fbf6ec 0%, var(--bg) 100%);
+}
+
+.shell {
+  width: min(960px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 48px 0 64px;
+}
+
+.hero,
+.card {
+  background: var(--panel);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  box-shadow: var(--shadow);
+}
+
+.hero {
+  padding: 32px;
+}
+
+.card {
+  margin-top: 20px;
+  padding: 28px;
+}
+
+.eyebrow {
+  margin: 0 0 10px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+h1,
+h2,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  max-width: 12ch;
+  margin-bottom: 16px;
+  font-size: clamp(2.4rem, 6vw, 4.4rem);
+  line-height: 0.94;
+}
+
+.lede {
+  max-width: 620px;
+  margin-bottom: 28px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.search-panel {
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.58);
+  border: 1px solid rgba(29, 42, 34, 0.08);
+  border-radius: 22px;
+}
+
+.label,
+.hint,
+.status,
+.result-item p,
+.meta {
+  color: var(--muted);
+}
+
+.label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.search-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+}
+
+input,
+button,
+.telegram-link,
+.result-item button {
+  font: inherit;
+}
+
+input {
+  width: 100%;
+  padding: 15px 18px;
+  border: 1px solid rgba(29, 42, 34, 0.14);
+  border-radius: 16px;
+  background: #fff;
+  color: var(--text);
+}
+
+button,
+.telegram-link,
+.result-item button {
+  border: 0;
+  border-radius: 16px;
+  cursor: pointer;
+  transition:
+    transform 160ms ease,
+    background 160ms ease,
+    color 160ms ease;
+}
+
+.search-row button,
+.telegram-link,
+.result-item button {
+  padding: 14px 18px;
+  font-weight: 700;
+}
+
+.search-row button,
+.telegram-link {
+  background: var(--accent);
+  color: #f4fffc;
+}
+
+.search-row button:hover,
+.telegram-link:hover,
+.result-item button:hover {
+  transform: translateY(-1px);
+}
+
+.hint,
+.status {
+  margin: 12px 0 0;
+  font-size: 0.92rem;
+}
+
+.results {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.result-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 18px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.74);
+  border: 1px solid rgba(29, 42, 34, 0.08);
+}
+
+.result-item h3,
+.result-item p {
+  margin-bottom: 0;
+}
+
+.result-item h3 {
+  margin-bottom: 4px;
+  font-size: 1rem;
+}
+
+.result-item button {
+  background: rgba(15, 118, 110, 0.14);
+  color: var(--accent-strong);
+  white-space: nowrap;
+}
+
+.card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.meta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 16px 0 24px;
+  font-size: 0.94rem;
+}
+
+.timings {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.timing-item {
+  padding: 16px;
+  border-radius: 18px;
+  background: rgba(15, 118, 110, 0.08);
+}
+
+.timing-item span {
+  display: block;
+}
+
+.timing-label {
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.timing-value {
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.hidden {
+  display: none;
+}
+
+@media (max-width: 720px) {
+  .shell {
+    width: min(100%, calc(100% - 20px));
+    padding-top: 20px;
+  }
+
+  .hero,
+  .card {
+    padding: 22px;
+    border-radius: 24px;
+  }
+
+  .search-row,
+  .card-head,
+  .result-item {
+    grid-template-columns: 1fr;
+    display: grid;
+  }
+
+  .telegram-link,
+  .result-item button,
+  .search-row button {
+    width: 100%;
+    text-align: center;
+  }
+}
