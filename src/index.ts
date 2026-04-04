@@ -6,7 +6,11 @@ import { TimeApiTimezoneService } from "./services/timezone";
 import { AlAdhanPrayerTimesService } from "./services/prayerTimes";
 import { D1UserRepository } from "./repositories/userRepository";
 import { CommandHandler } from "./handlers/commandHandler";
-import { CronHandler } from "./handlers/cronHandler";
+import { DispatchCronHandler } from "./handlers/dispatchCronHandler";
+import { RefreshCronHandler } from "./handlers/refreshCronHandler";
+
+const DISPATCH_CRON = "* * * * *";
+const REFRESH_CRON = "0 0 * * *";
 
 function buildHandlers(env: Env) {
   const telegram = new TelegramApiClient(env);
@@ -23,9 +27,10 @@ function buildHandlers(env: Env) {
     users
   });
 
-  const cronHandler = new CronHandler({ telegram, prayerTimes, users });
+  const dispatchCronHandler = new DispatchCronHandler({ telegram, prayerTimes, users });
+  const refreshCronHandler = new RefreshCronHandler();
 
-  return { commandHandler, cronHandler };
+  return { commandHandler, dispatchCronHandler, refreshCronHandler };
 }
 
 export default {
@@ -44,8 +49,17 @@ export default {
     return bad("Not Found", 404);
   },
 
-  async scheduled(_controller: ScheduledController, env: Env) {
-    const { cronHandler } = buildHandlers(env);
-    await cronHandler.handle();
+  async scheduled(controller: ScheduledController, env: Env) {
+    const { dispatchCronHandler, refreshCronHandler } = buildHandlers(env);
+
+    if (controller.cron === REFRESH_CRON) {
+      await refreshCronHandler.handle();
+      return;
+    }
+
+    if (controller.cron === DISPATCH_CRON) {
+      await dispatchCronHandler.handle();
+      return;
+    }
   }
 };

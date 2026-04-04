@@ -16,7 +16,7 @@ type Deps = {
   users: UserRepository;
 };
 
-export class CronHandler {
+export class DispatchCronHandler {
   constructor(private deps: Deps) {}
 
   async handle(): Promise<void> {
@@ -34,7 +34,7 @@ export class CronHandler {
       if (!(await this.deps.users.wasSent(u.chat_id, dayLocal, prayer))) {
         await this.deps.telegram.sendMessage(
           u.chat_id,
-          `🕌 Waktunya sholat ${prayer}!\nSemoga Allah terima ibadahmu. 🤍`
+          `ðŸ•Œ Waktunya sholat ${prayer}!\nSemoga Allah terima ibadahmu. ðŸ¤`
         );
         await this.deps.users.markSent(u.chat_id, dayLocal, prayer);
       }
