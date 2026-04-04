@@ -82,14 +82,14 @@ wrangler deploy
 8. Set webhook Telegram:
 ```bash
 curl -X POST "https://api.telegram.org/bot<YOUR_TOKEN>/setWebhook" \
-  -d "url=https://sholat-bot.<subdomain>.workers.dev/webhook/<WEBHOOK_SECRET>"
+  -d "url=https://sholat-bot.muharyman.workers.dev/webhook/<WEBHOOK_SECRET>"
 ```
 
 ## Frontend Deploy (Vercel)
 1. Edit `web/config.js`:
 ```js
 window.SHOLAT_APP_CONFIG = {
-  API_BASE_URL: "https://sholat-bot.<your-cloudflare-subdomain>.workers.dev",
+  API_BASE_URL: "https://sholat-bot.muharyman.workers.dev",
   TELEGRAM_BOT_URL: "https://t.me/your_bot_username"
 };
 ```
