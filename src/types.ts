@@ -3,6 +3,7 @@ export interface Env {
 
   TELEGRAM_API_BASE: string;
   NOMINATIM_USER_AGENT: string;
+  FRONTEND_ORIGIN?: string;
 
   TELEGRAM_BOT_TOKEN: string;
   WEBHOOK_SECRET: string;

@@ -1,7 +1,10 @@
-export function okJson(obj: unknown) {
+export function okJson(obj: unknown, headers?: HeadersInit) {
   return new Response(JSON.stringify(obj), {
     status: 200,
-    headers: { "content-type": "application/json; charset=utf-8" }
+    headers: {
+      "content-type": "application/json; charset=utf-8",
+      ...headers
+    }
   });
 }
 
