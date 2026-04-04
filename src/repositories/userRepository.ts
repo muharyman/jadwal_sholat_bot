@@ -2,6 +2,7 @@ import type { Env, UserRow } from "../types";
 
 export interface UserRepository {
   getUser(chatId: number): Promise<UserRow | null>;
+  listSchedulableUsers(): Promise<UserRow[]>;
   upsertUser(u: Partial<UserRow> & { chat_id: number }): Promise<void>;
   setMuted(chatId: number, muted: number): Promise<void>;
   markSent(chatId: number, dayLocal: string, prayer: string): Promise<void>;
@@ -21,10 +22,20 @@ export class D1UserRepository implements UserRepository {
     return row || null;
   }
 
+  async listSchedulableUsers(): Promise<UserRow[]> {
+    const rows = await this.env.DB.prepare(
+      "SELECT * FROM users WHERE lat IS NOT NULL AND lon IS NOT NULL AND tz IS NOT NULL"
+    ).all<UserRow>();
+    return rows.results ?? [];
+  }
+
   async upsertUser(u: Partial<UserRow> & { chat_id: number }): Promise<void> {
     await this.env.DB.prepare(`
-      INSERT INTO users (chat_id, city, country, lat, lon, tz, method, muted, next_prayer, next_due_minute_utc, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO users (
+        chat_id, city, country, lat, lon, tz, method, muted, schedule_key, next_prayer,
+        next_due_minute_utc, updated_at
+      )
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       ON CONFLICT(chat_id) DO UPDATE SET
         city=excluded.city,
         country=excluded.country,
@@ -33,6 +44,7 @@ export class D1UserRepository implements UserRepository {
         tz=excluded.tz,
         method=excluded.method,
         muted=excluded.muted,
+        schedule_key=excluded.schedule_key,
         next_prayer=excluded.next_prayer,
         next_due_minute_utc=excluded.next_due_minute_utc,
         updated_at=excluded.updated_at
@@ -45,6 +57,7 @@ export class D1UserRepository implements UserRepository {
       u.tz ?? null,
       u.method ?? 3,
       u.muted ?? 0,
+      u.schedule_key ?? null,
       u.next_prayer ?? null,
       u.next_due_minute_utc ?? null,
       new Date().toISOString()

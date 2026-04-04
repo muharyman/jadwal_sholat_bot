@@ -5,9 +5,11 @@ import { NominatimGeocoder } from "./services/geocoding";
 import { TimeApiTimezoneService } from "./services/timezone";
 import { AlAdhanPrayerTimesService } from "./services/prayerTimes";
 import { D1UserRepository } from "./repositories/userRepository";
+import { D1ScheduleRepository } from "./repositories/scheduleRepository";
 import { CommandHandler } from "./handlers/commandHandler";
 import { DispatchCronHandler } from "./handlers/dispatchCronHandler";
 import { RefreshCronHandler } from "./handlers/refreshCronHandler";
+import { PrayerScheduleCacheService } from "./services/scheduleCache";
 
 const DISPATCH_CRON = "* * * * *";
 const REFRESH_CRON = "0 0 * * *";
@@ -18,17 +20,20 @@ function buildHandlers(env: Env) {
   const timezone = new TimeApiTimezoneService();
   const prayerTimes = new AlAdhanPrayerTimesService();
   const users = new D1UserRepository(env);
+  const schedules = new D1ScheduleRepository(env);
+  const scheduleCache = new PrayerScheduleCacheService({ prayerTimes, schedules });
 
   const commandHandler = new CommandHandler({
     telegram,
     geocoder,
     timezone,
     prayerTimes,
+    scheduleCache,
     users
   });
 
-  const dispatchCronHandler = new DispatchCronHandler({ telegram, prayerTimes, users });
-  const refreshCronHandler = new RefreshCronHandler();
+  const dispatchCronHandler = new DispatchCronHandler({ telegram, scheduleCache, users });
+  const refreshCronHandler = new RefreshCronHandler({ scheduleCache, users });
 
   return { commandHandler, dispatchCronHandler, refreshCronHandler };
 }

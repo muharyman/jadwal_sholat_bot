@@ -11,8 +11,8 @@ export type LocalDateTimeParts = LocalDateParts & {
   minute: number;
 };
 
-export function nowIsoMinuteUTC(): string {
-  const d = new Date();
+export function nowIsoMinuteUTC(date = new Date()): string {
+  const d = new Date(date);
   d.setSeconds(0, 0);
   return d.toISOString().slice(0, 16);
 }
@@ -99,6 +99,17 @@ function utcFromZonedParts(
   }
 
   return new Date(utcMs);
+}
+
+export function localTimeToIsoMinuteUTC(
+  tz: string,
+  localDate: LocalDateParts,
+  hour: number,
+  minute: number
+): string {
+  const due = utcFromZonedParts(tz, localDate, hour, minute);
+  due.setSeconds(0, 0);
+  return due.toISOString().slice(0, 16);
 }
 
 export function computeNextDueMinuteUTC(

@@ -1,18 +1,12 @@
-import type { PrayerTimesService } from "../services/prayerTimes";
 import type { TelegramClient } from "../services/telegram";
 import type { UserRepository } from "../repositories/userRepository";
-import {
-  localDayISO,
-  nowIsoMinuteUTC,
-  computeNextDueMinuteUTC,
-  localDateParts,
-  addDaysToLocalDate
-} from "../utils/time";
+import { localDayISO, nowIsoMinuteUTC } from "../utils/time";
 import type { PrayerName } from "../domain/prayer";
+import { PrayerScheduleCacheService } from "../services/scheduleCache";
 
 type Deps = {
   telegram: TelegramClient;
-  prayerTimes: PrayerTimesService;
+  scheduleCache: PrayerScheduleCacheService;
   users: UserRepository;
 };
 
@@ -39,21 +33,7 @@ export class DispatchCronHandler {
         await this.deps.users.markSent(u.chat_id, dayLocal, prayer);
       }
 
-      const method = u.method ?? 3;
-      const today = localDateParts(u.tz);
-      const timings = await this.deps.prayerTimes.fetchPrayerTimes(u.lat, u.lon, method, today);
-      let next = computeNextDueMinuteUTC(u.tz, timings, today);
-
-      if (!next) {
-        const tomorrow = addDaysToLocalDate(today, 1);
-        const timingsTomorrow = await this.deps.prayerTimes.fetchPrayerTimes(
-          u.lat,
-          u.lon,
-          method,
-          tomorrow
-        );
-        next = computeNextDueMinuteUTC(u.tz, timingsTomorrow, tomorrow);
-      }
+      const next = await this.deps.scheduleCache.findNextForUser(u, minuteUTC, false);
 
       await this.deps.users.updateNextSchedule(
         u.chat_id,
@@ -67,21 +47,7 @@ export class DispatchCronHandler {
     for (const u of staleUsers) {
       if (!u.chat_id || !u.lat || !u.lon || !u.tz) continue;
 
-      const method = u.method ?? 3;
-      const today = localDateParts(u.tz);
-      const timings = await this.deps.prayerTimes.fetchPrayerTimes(u.lat, u.lon, method, today);
-      let next = computeNextDueMinuteUTC(u.tz, timings, today);
-
-      if (!next) {
-        const tomorrow = addDaysToLocalDate(today, 1);
-        const timingsTomorrow = await this.deps.prayerTimes.fetchPrayerTimes(
-          u.lat,
-          u.lon,
-          method,
-          tomorrow
-        );
-        next = computeNextDueMinuteUTC(u.tz, timingsTomorrow, tomorrow);
-      }
+      const next = await this.deps.scheduleCache.findNextForUser(u, minuteUTC, true);
 
       await this.deps.users.updateNextSchedule(
         u.chat_id,

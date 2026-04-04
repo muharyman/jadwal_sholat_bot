@@ -5,13 +5,15 @@ import type { PrayerTimesService } from "../services/prayerTimes";
 import type { TelegramClient } from "../services/telegram";
 import type { UserRepository } from "../repositories/userRepository";
 import { parseCommand } from "../utils/command";
-import { computeNextDueMinuteUTC, localDateParts, addDaysToLocalDate } from "../utils/time";
+import { localDateParts } from "../utils/time";
+import { PrayerScheduleCacheService } from "../services/scheduleCache";
 
 type Deps = {
   telegram: TelegramClient;
   geocoder: Geocoder;
   timezone: TimezoneService;
   prayerTimes: PrayerTimesService;
+  scheduleCache: PrayerScheduleCacheService;
   users: UserRepository;
 };
 
@@ -72,20 +74,16 @@ export class CommandHandler {
       const [city, country] = args.split(",").map(s => s.trim());
 
       const method = 3;
-      const today = localDateParts(tz);
-      const timings = await this.deps.prayerTimes.fetchPrayerTimes(geo.lat, geo.lon, method, today);
-      let next = computeNextDueMinuteUTC(tz, timings, today);
-
-      if (!next) {
-        const tomorrow = addDaysToLocalDate(today, 1);
-        const timingsTomorrow = await this.deps.prayerTimes.fetchPrayerTimes(
-          geo.lat,
-          geo.lon,
-          method,
-          tomorrow
-        );
-        next = computeNextDueMinuteUTC(tz, timingsTomorrow, tomorrow);
-      }
+      const schedule = await this.deps.scheduleCache.syncUserSchedule({
+        chat_id: chatId,
+        city: city || args,
+        country: country || "",
+        lat: geo.lat,
+        lon: geo.lon,
+        tz,
+        method,
+        schedule_key: null
+      });
 
       await this.deps.users.upsertUser({
         chat_id: chatId,
@@ -96,8 +94,9 @@ export class CommandHandler {
         tz,
         method,
         muted: 0,
-        next_prayer: next?.nextPrayer ?? null,
-        next_due_minute_utc: next?.dueMinuteUTC ?? null
+        schedule_key: schedule?.scheduleKey ?? null,
+        next_prayer: schedule?.nextPrayer ?? null,
+        next_due_minute_utc: schedule?.dueMinuteUTC ?? null
       });
 
       await this.deps.telegram.sendMessage(
@@ -135,20 +134,16 @@ export class CommandHandler {
         return;
       }
 
-      const today = localDateParts(u.tz);
-      const timings = await this.deps.prayerTimes.fetchPrayerTimes(u.lat, u.lon, m, today);
-      let next = computeNextDueMinuteUTC(u.tz, timings, today);
-
-      if (!next) {
-        const tomorrow = addDaysToLocalDate(today, 1);
-        const timingsTomorrow = await this.deps.prayerTimes.fetchPrayerTimes(
-          u.lat,
-          u.lon,
-          m,
-          tomorrow
-        );
-        next = computeNextDueMinuteUTC(u.tz, timingsTomorrow, tomorrow);
-      }
+      const schedule = await this.deps.scheduleCache.syncUserSchedule({
+        chat_id: chatId,
+        city: u.city ?? "",
+        country: u.country ?? "",
+        lat: u.lat,
+        lon: u.lon,
+        tz: u.tz,
+        method: m,
+        schedule_key: null
+      });
 
       await this.deps.users.upsertUser({
         chat_id: chatId,
@@ -159,8 +154,9 @@ export class CommandHandler {
         tz: u.tz,
         method: m,
         muted: u.muted ?? 0,
-        next_prayer: next?.nextPrayer ?? null,
-        next_due_minute_utc: next?.dueMinuteUTC ?? null
+        schedule_key: schedule?.scheduleKey ?? null,
+        next_prayer: schedule?.nextPrayer ?? null,
+        next_due_minute_utc: schedule?.dueMinuteUTC ?? null
       });
 
       await this.deps.telegram.sendMessage(chatId, `✅ Method diubah ke ${m}.`);
