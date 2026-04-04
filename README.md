@@ -1,31 +1,31 @@
 # Sholat Telegram Bot
 
-Bot Telegram berbasis Cloudflare Workers + D1 untuk reminder waktu sholat, plus frontend statis sederhana untuk preview jadwal.
+A Telegram bot built on Cloudflare Workers + D1 for prayer time reminders, with a simple static frontend for schedule preview.
 
 ## Features
-- Set lokasi cukup dengan nama kota lewat Telegram.
-- Reminder real-time tetap dikirim tiap waktu sholat.
-- Refresh jadwal harian dipisah dari dispatch notifikasi.
-- Public API read-only untuk frontend preview.
-- Static landing page sederhana di folder `web/`.
+- Set the user location with a city name through Telegram.
+- Send real-time reminders at each prayer time.
+- Separate daily schedule refresh from notification dispatch.
+- Expose read-only public API endpoints for the frontend preview.
+- Include a simple static landing page in the `web/` folder.
 
 ## Commands
 - `/start`
-- `/setcity <kota, negara>`
+- `/setcity <city, country>`
 - `/status`
 - `/method <number>`
 - `/mute`
 - `/unmute`
 
 ## Architecture
-- `* * * * *`: dispatch notifikasi Telegram dari schedule yang sudah tersimpan di D1.
-- `0 0 * * *`: refresh cache jadwal harian dari AlAdhan untuk hari lokal aktif + hari berikutnya.
+- `* * * * *`: dispatch Telegram notifications from schedules already stored in D1.
+- `0 0 * * *`: refresh the daily schedule cache from AlAdhan for the active local day and the next local day.
 - Geocoding: Nominatim.
-- Timezone lookup: timeapi.io dengan fallback AlAdhan.
+- Timezone lookup: timeapi.io with AlAdhan as fallback.
 - Prayer times: AlAdhan.
 
 ## Worker Configuration
-Salin `wrangler.toml.example` menjadi `wrangler.toml`, lalu isi nilainya.
+Copy `wrangler.toml.example` to `wrangler.toml`, then fill in the values.
 
 Vars:
 - `TELEGRAM_API_BASE`
@@ -55,31 +55,31 @@ npm install
 wrangler login
 ```
 
-3. Buat D1 database:
+3. Create the D1 database:
 ```bash
 wrangler d1 create sholat_bot_db
 ```
 
-4. Isi `database_id` ke `wrangler.toml`.
+4. Put the `database_id` into `wrangler.toml`.
 
-5. Jalankan migrasi:
+5. Run the migrations:
 ```bash
 wrangler d1 migrations apply sholat_bot_db --local
 wrangler d1 migrations apply sholat_bot_db
 ```
 
-6. Simpan secret:
+6. Store the secrets:
 ```bash
 wrangler secret put TELEGRAM_BOT_TOKEN
 wrangler secret put WEBHOOK_SECRET
 ```
 
-7. Deploy Worker:
+7. Deploy the Worker:
 ```bash
 wrangler deploy
 ```
 
-8. Set webhook Telegram:
+8. Set the Telegram webhook:
 ```bash
 curl -X POST "https://api.telegram.org/bot<YOUR_TOKEN>/setWebhook" \
   -d "url=https://sholat-bot.muharyman.workers.dev/webhook/<WEBHOOK_SECRET>"
@@ -94,9 +94,9 @@ window.SHOLAT_APP_CONFIG = {
 };
 ```
 
-2. Saat membuat project di Vercel, set Root Directory ke `web`.
+2. When creating the project in Vercel, set the Root Directory to `web`.
 
-3. Deploy static site:
+3. Deploy the static site:
 ```bash
 vercel --prod
 ```
@@ -105,11 +105,11 @@ Frontend app:
 - `https://jadwal-sholat-bot.vercel.app/`
 
 ## Local Notes
-- `wrangler.toml` di-ignore oleh git. Simpan perubahan lokal di file itu, dan gunakan `wrangler.toml.example` sebagai template repo.
-- Frontend preview memanggil Worker API langsung, jadi `FRONTEND_ORIGIN` di Worker harus sesuai domain Vercel.
-- Frontend menyimpan kota terakhir yang berhasil dipilih di `localStorage`, lalu memuat ulang data terbaru saat halaman dibuka kembali.
-- Tampilan frontend menggunakan copy berbahasa Inggris dan format tanggal panjang seperti `Sunday, 5 April 2026`.
-- Dispatch cron per menit tidak lagi fetch AlAdhan.
+- `wrangler.toml` is ignored by git. Keep local changes in that file and use `wrangler.toml.example` as the repository template.
+- The frontend preview calls the Worker API directly, so `FRONTEND_ORIGIN` in the Worker should match the Vercel domain.
+- The frontend stores the last successfully selected city in `localStorage`, then reloads fresh data when the page is opened again.
+- The frontend uses English copy and a long date format such as `Sunday, 5 April 2026`.
+- The minute-level dispatch cron no longer fetches AlAdhan directly.
 
 ## License
-MIT. Lihat `LICENSE`.
+MIT. See `LICENSE`.
