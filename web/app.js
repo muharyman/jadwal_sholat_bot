@@ -16,7 +16,7 @@ const LAST_CITY_STORAGE_KEY = "sholat:last-city";
 telegramLink.href = config.TELEGRAM_BOT_URL || "#";
 
 if (!config.API_BASE_URL || !config.TELEGRAM_BOT_URL) {
-  setStatus("Complete `web/config.js` before deploying the frontend.", true);
+  setStatus("Complete `web/config.js` before deploying the site.", true);
 }
 
 searchForm.addEventListener("submit", async event => {
@@ -24,11 +24,11 @@ searchForm.addEventListener("submit", async event => {
 
   const query = cityInput.value.trim();
   if (!query) {
-    setStatus("Enter a city name first.", true);
+    setStatus("Please enter a city name first.", true);
     return;
   }
 
-  setStatus("Searching for a city...");
+  setStatus("Looking up matching cities...");
   hideSchedule();
   resultsEl.innerHTML = "";
 
@@ -39,11 +39,11 @@ searchForm.addEventListener("submit", async event => {
     const results = response.results || [];
 
     if (!results.length) {
-      setStatus("City not found. Try a more specific query.", true);
+      setStatus("No matching city found. Try a more specific search.", true);
       return;
     }
 
-    setStatus("Select one of the matching results below.");
+    setStatus("Choose the city that matches you best.");
     renderResults(results);
   } catch (error) {
     setStatus(readError(error), true);
@@ -71,7 +71,7 @@ function renderResults(results) {
 }
 
 async function loadPrayerTimes(city, options = {}) {
-  const { persistCity = false, initialStatus = "Loading prayer times..." } = options;
+  const { persistCity = false, initialStatus = "Loading today's prayer times..." } = options;
 
   setStatus(initialStatus);
   cityInput.value = city;
@@ -101,7 +101,7 @@ async function loadPrayerTimes(city, options = {}) {
     }
 
     showSchedule();
-    setStatus(`Prayer times for ${response.city} loaded successfully.`);
+    setStatus(`Prayer times for ${response.city} are ready.`);
   } catch (error) {
     setStatus(readError(error), true);
   }

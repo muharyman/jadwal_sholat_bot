@@ -18,6 +18,8 @@
 }
 
 body {
+  display: flex;
+  align-items: center;
   margin: 0;
   min-height: 100vh;
   font-family: "Plus Jakarta Sans", sans-serif;
@@ -32,7 +34,11 @@ body {
 .shell {
   width: min(1040px, calc(100% - 32px));
   margin: 0 auto;
-  padding: 48px 0 64px;
+  padding: 20px 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1.02fr) minmax(360px, 0.98fr);
+  gap: 18px;
+  align-items: stretch;
 }
 
 .hero,
@@ -59,12 +65,17 @@ body {
 }
 
 .hero {
-  padding: 32px;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
 }
 
 .card {
-  margin-top: 20px;
-  padding: 28px;
+  margin-top: 0;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 
 .eyebrow {
@@ -83,24 +94,24 @@ p {
 }
 
 h1 {
-  max-width: 11ch;
-  margin-bottom: 16px;
-  font-size: clamp(2.5rem, 6vw, 4.9rem);
-  line-height: 0.92;
+  max-width: 13ch;
+  margin-bottom: 12px;
+  font-size: clamp(2rem, 4.4vw, 3.3rem);
+  line-height: 0.98;
   letter-spacing: -0.04em;
 }
 
 .lede {
-  max-width: 620px;
-  margin-bottom: 28px;
+  max-width: 52ch;
+  margin-bottom: 20px;
   color: var(--muted);
-  line-height: 1.7;
+  line-height: 1.55;
 }
 
 .search-panel {
   position: relative;
   z-index: 1;
-  padding: 20px;
+  padding: 18px;
   background: var(--panel-strong);
   border: 1px solid rgba(29, 42, 34, 0.08);
   border-radius: 22px;
@@ -125,7 +136,7 @@ h1 {
 .search-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 12px;
+  gap: 10px;
 }
 
 input,
@@ -137,7 +148,7 @@ button,
 
 input {
   width: 100%;
-  padding: 15px 18px;
+  padding: 13px 16px;
   border: 1px solid rgba(29, 42, 34, 0.14);
   border-radius: 16px;
   background: #fff;
@@ -169,7 +180,7 @@ button,
 .search-row button,
 .telegram-link,
 .result-item button {
-  padding: 14px 18px;
+  padding: 12px 16px;
   font-weight: 700;
 }
 
@@ -188,8 +199,8 @@ button,
 
 .hint,
 .status {
-  margin: 12px 0 0;
-  font-size: 0.92rem;
+  margin: 10px 0 0;
+  font-size: 0.88rem;
 }
 
 .status {
@@ -198,8 +209,8 @@ button,
 
 .results {
   display: grid;
-  gap: 12px;
-  margin-top: 18px;
+  gap: 10px;
+  margin-top: 14px;
 }
 
 .results:empty {
@@ -210,9 +221,9 @@ button,
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  gap: 16px;
-  padding: 16px 18px;
-  border-radius: 20px;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 18px;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(255, 251, 245, 0.78));
   border: 1px solid rgba(29, 42, 34, 0.08);
@@ -225,8 +236,8 @@ button,
 }
 
 .result-item h3 {
-  margin-bottom: 4px;
-  font-size: 1rem;
+  margin-bottom: 3px;
+  font-size: 0.98rem;
 }
 
 .result-item button {
@@ -240,7 +251,7 @@ button,
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 16px;
+  gap: 12px;
 }
 
 .card-head > div {
@@ -250,21 +261,21 @@ button,
 #schedule-title {
   max-width: 20ch;
   margin-bottom: 0;
-  font-size: clamp(1.8rem, 4vw, 2.5rem);
-  line-height: 1;
+  font-size: clamp(1.45rem, 2.8vw, 2.1rem);
+  line-height: 1.02;
   letter-spacing: -0.03em;
 }
 
 .meta {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
-  margin: 16px 0 24px;
-  font-size: 0.94rem;
+  margin: 14px 0 18px;
+  font-size: 0.88rem;
 }
 
 .meta span {
-  padding: 10px 14px;
+  padding: 8px 12px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.62);
   border: 1px solid rgba(29, 42, 34, 0.06);
@@ -272,13 +283,13 @@ button,
 
 .timings {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+  gap: 10px;
 }
 
 .timing-item {
-  padding: 16px;
-  border-radius: 18px;
+  padding: 14px;
+  border-radius: 16px;
   background:
     linear-gradient(180deg, rgba(15, 118, 110, 0.12), rgba(255, 255, 255, 0.84));
   border: 1px solid rgba(15, 118, 110, 0.08);
@@ -289,13 +300,13 @@ button,
 }
 
 .timing-label {
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   color: var(--muted);
-  font-size: 0.92rem;
+  font-size: 0.86rem;
 }
 
 .timing-value {
-  font-size: 1.2rem;
+  font-size: 1.08rem;
   font-weight: 800;
 }
 
@@ -306,29 +317,35 @@ button,
 @media (max-width: 920px) {
   .shell {
     width: min(100%, calc(100% - 24px));
+    grid-template-columns: 1fr;
+    padding: 18px 0 24px;
   }
 
   h1 {
-    max-width: 13ch;
+    max-width: 14ch;
   }
 }
 
 @media (max-width: 720px) {
+  body {
+    display: block;
+  }
+
   .shell {
     width: min(100%, calc(100% - 20px));
-    padding-top: 20px;
-    padding-bottom: 28px;
+    padding-top: 16px;
+    padding-bottom: 24px;
   }
 
   .hero,
   .card {
-    padding: 22px;
+    padding: 20px;
     border-radius: 24px;
   }
 
   h1 {
     max-width: 100%;
-    font-size: clamp(2rem, 10vw, 3.2rem);
+    font-size: clamp(1.8rem, 8vw, 2.5rem);
   }
 
   .card-head,
@@ -355,6 +372,7 @@ button,
 
 @media (max-width: 480px) {
   body {
+    display: block;
     background:
       radial-gradient(circle at top, rgba(15, 118, 110, 0.12), transparent 34%),
       linear-gradient(180deg, #fbf6ec 0%, var(--bg) 100%);
