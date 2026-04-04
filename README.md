@@ -101,6 +101,9 @@ window.SHOLAT_APP_CONFIG = {
 vercel --prod
 ```
 
+Frontend app:
+- `https://jadwal-sholat-bot.vercel.app/`
+
 ## Local Notes
 - `wrangler.toml` di-ignore oleh git. Simpan perubahan lokal di file itu, dan gunakan `wrangler.toml.example` sebagai template repo.
 - Frontend preview memanggil Worker API langsung, jadi `FRONTEND_ORIGIN` di Worker harus sesuai domain Vercel.
