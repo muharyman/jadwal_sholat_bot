@@ -11,6 +11,7 @@ const telegramLink = document.getElementById("telegram-link");
 const timingsEl = document.getElementById("timings");
 
 const prayerOrder = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
+const LAST_CITY_STORAGE_KEY = "sholat:last-city";
 
 telegramLink.href = config.TELEGRAM_BOT_URL || "#";
 
@@ -62,21 +63,28 @@ function renderResults(results) {
     const button = document.createElement("button");
     button.type = "button";
     button.textContent = "Lihat Jadwal";
-    button.addEventListener("click", () => loadPrayerTimes(result.query));
+    button.addEventListener("click", () => loadPrayerTimes(result.query, { persistCity: true }));
 
     item.append(copy, button);
     resultsEl.appendChild(item);
   }
 }
 
-async function loadPrayerTimes(city) {
-  setStatus("Mengambil jadwal sholat...");
+async function loadPrayerTimes(city, options = {}) {
+  const { persistCity = false, initialStatus = "Mengambil jadwal sholat..." } = options;
+
+  setStatus(initialStatus);
+  cityInput.value = city;
   hideSchedule();
 
   try {
     const response = await fetchJson(
       `${config.API_BASE_URL}/api/public/prayer-times?city=${encodeURIComponent(city)}&method=3`
     );
+
+    if (persistCity) {
+      localStorage.setItem(LAST_CITY_STORAGE_KEY, city);
+    }
 
     scheduleTitle.textContent = response.city;
     scheduleDate.textContent = `Tanggal lokal: ${response.day_local}`;
@@ -135,4 +143,12 @@ function escapeHtml(value) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#39;");
+}
+
+const lastCity = localStorage.getItem(LAST_CITY_STORAGE_KEY);
+if (lastCity) {
+  cityInput.value = lastCity;
+  loadPrayerTimes(lastCity, {
+    initialStatus: "Memuat ulang jadwal kota terakhir..."
+  });
 }
